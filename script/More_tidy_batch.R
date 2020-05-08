@@ -30,7 +30,12 @@ tidier_batch <- batch_01 %>%
   mutate(Class = str_extract(`Name`, "[a-zA-Z]+"))  
   # mutate(TC = word(`Name`, 1, 1, sep = "_"),
   #        DB = word(`Name`, -1, -1, sep = "_"))
-  
+
+
+cleaned_batch <- tidier_batch %>% 
+  mutate(Reject = case_when(Adduct == "Na-Gain" ~ "rej",
+                                Class == "CL" & RT < 10 ~ "rej",
+                         TRUE ~ ""))
 
 
 over_rep <- tidier_batch %>% 
@@ -61,7 +66,7 @@ ggplot(over_rep02, aes(meanRT, ExtractedMass)) +
  
 # plot based on Classes
 
-unique(over_rep02$Class)
+lipid_class <- unique(over_rep02$Class)
 
 class  <- over_rep02 %>% 
   filter(Class == "CL")
@@ -144,6 +149,8 @@ plot_class <-  function(df, class) {
 }
 
 plot_class(over_rep02, "CL")
+
+
 #same function below without object This works
 plot_class <-  function(df) {
       df <-  df %>% 
