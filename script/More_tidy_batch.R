@@ -113,16 +113,12 @@ plots_classes
 # now plotting all lipids with some of the modifications above
 #filter(grepl( "CL", Class)) %>% 
 
-all_lipids <- over_rep02 %>% 
-    filter((Class =="CL" & meanRT > 15)|(Class =="PC" & !Adduct =="Na-Gain")) 
-
-       filter(over_rep02,
-              grepl("PC", Class)),
-              Adduct =="Na-Gain") %>%
+all_lipids01 <- over_rep02 %>% 
+    filter((!Class =="CL" & meanRT > 15)|(Class =="PC" & Adduct !="Na-Gain"))  %>%
     ggplot(aes(meanRT, ExtractedMass)) +
   geom_point(aes(colour = batch, shape = Polarity)) +
   scale_shape_manual(values = c(6,16)) +
-  labs(title = "All lipids tidier version") 
+  labs(title = "All lipids tid version") 
 
 all_lipids
 #--------------------------------------------------------------------
