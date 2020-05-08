@@ -141,9 +141,9 @@ all_lipids
 # 
 # '''
 # this function below doesn't work
-plot_class <-  function(df) {
+plot_class <-  function(df, class) {
     df <-  df %>% 
-     filter(Class == "CL" )
+     filter(Class %in% c(class) )
     y <- ggplot(df, aes(meanRT, ExtractedMass)) +
     geom_point(aes(colour = batch, shape = Polarity)) +
     scale_shape_manual(values = c(6,16))
@@ -151,7 +151,7 @@ plot_class <-  function(df) {
     return(y)
 }
 
-
+plot_class(over_rep02, "CL")
 #same function below without object This works
 plot_class <-  function(df) {
       df <-  df %>% 
@@ -183,7 +183,7 @@ plot_class <-  function(data, var =c("x")) {
 }
 
 
-plot_class(over_rep02, var =c("FA"))
+plot_class(over_rep02, var =c("PI","PG"))
 
 
 
