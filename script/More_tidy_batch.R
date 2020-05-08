@@ -20,20 +20,12 @@ batch_04 <- read_csv("Data/LS_batch04.csv", col_types = cols(Name = col_characte
 #   full_join(batch_04) %>% 
 #   select(-"X11", -Window) 
 
-batch_bind <- batch_01 %>% 
+tidier_batch <- batch_01 %>% 
   rbind(batch_02, batch_03, batch_04) %>% 
   mutate(RT = round(RT, 1)) %>% 
-  unique()
-
-batchall <- batch_bind %>% 
   select(-"X11", -Window) %>% 
-  unique() %>% 
-  arrange(CompoundName, RT) 
-
-tidier_batch <- batchall %>% 
-  rename(Name = CompoundName) %>% 
-  rename( Formula = ChemicalFormula) %>% 
-  #select(Name, Formula) %>% 
+  arrange(CompoundName, RT) %>% 
+  rename(Name = CompoundName, Formula = ChemicalFormula) %>% 
   unique() %>% 
   mutate(Class = str_extract(`Name`, "[a-zA-Z]+"))  
   # mutate(TC = word(`Name`, 1, 1, sep = "_"),
