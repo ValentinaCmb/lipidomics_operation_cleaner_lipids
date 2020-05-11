@@ -14,4 +14,20 @@ CDdata_gathered <- batch_qcs %>%
 
   unique('Sample')
 
-  group_by(Name, `RT [min]`)%>%
+  group_by(Name, `RT [min]`)
+
+    
+#or
+  CDdata_gathered <- batch_qcs %>% 
+    gather(Sample, Area, contains("Area: ")) %>%
+    filter(!is.na(Area)) %>%
+    group_by(Name, Formula, `RT [min]`, `Area (Max.)`) %>% 
+    summarise(
+      count = n()
+    )
+  
+  CD_filtered <- CDdata_gathered %>%  
+    filter(count >= 10)
+  
+    
+    
