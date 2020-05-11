@@ -31,17 +31,50 @@ tidier_batch <- batch_01 %>%
   # mutate(TC = word(`Name`, 1, 1, sep = "_"),
   #        DB = word(`Name`, -1, -1, sep = "_"))
 
+# plot based on batches
+ggplot(cleaned_batch, aes(RT, ExtractedMass)) +
+  geom_point(aes(colour = batch, shape = Polarity)) +
+  scale_shape_manual(values = c(6,16))
 
+#remove unwanted lipids
 cleaned_batch <- tidier_batch %>% 
-  mutate(Reject = case_when(Adduct == "Na-Gain" ~ "rej",
-                                Class == "CL" & RT < 10 ~ "rej",
+  mutate(Reject = case_when(RT > 25 ~ "rej",
+                            ChargeState != 1 ~ "rej",
+                            Adduct == "Na-Gain" ~ "rej",
+                            Class == "CL" & RT < 15 ~ "rej",
                          TRUE ~ ""))
 
+# plot based on cleaned batches
+ggplot(cleaned_batch %>% filter(Reject != "rej"), aes(RT, ExtractedMass)) +
+  geom_point(aes(colour = batch, shape = Polarity)) +
+  scale_shape_manual(values = c(6,16))
 
-over_rep <- tidier_batch %>% 
-  group_by(Class, Formula, Ionization, Polarity, Adduct, ChargeState, ExtractedMass, batch) %>% 
-  filter(RT < 25,
-         ChargeState == 1) %>% 
+Adduct_spread <- cleaned_batch %>% 
+  filter(Reject != "rej") %>% 
+  select(Name, Class, Formula, batch, RT, ExtractedMass, Adduct) %>% 
+  spread(Adduct, ExtractedMass) %>% 
+  mutate(MW = case_when(!is.na(`H-Gain`) ~ `H-Gain` - 1,
+                        !is.na(`H-Loss`) ~ `H-Loss` + 1,
+                        !is.na(`NH4-Gain`) ~ `NH4-Gain` -18,
+                        !is.na(`HCO2-Gain`) ~ `HCO2-Gain` - 45))
+
+RT_test <- Adduct_spread %>% 
+  group_by(Name, Class, Formula, MW) %>% 
+  # filter(Reject != "rej") %>% 
+  summarise(
+    n = n(),
+    meanRT = mean(RT),
+    sdRT = sd(RT),
+    minRT = min(RT),
+    maxRT = max(RT)
+  )
+
+ggplot(RT_test, aes(meanRT, MW, colour = Class)) +
+  geom_point()
+
+over_rep <- cleaned_batch %>% 
+  group_by(Name, Class, Formula, Ionization, Polarity, Adduct, ChargeState, ExtractedMass) %>% 
+  filter(Reject != "rej") %>% 
   summarise(
     n = n(),
     meanRT = mean(RT),
@@ -56,13 +89,9 @@ over_rep <- tidier_batch %>%
 over_rep02 <- over_rep %>% 
   ungroup() %>% 
   #group_by(Class) %>% 
-  mutate(batch = word(`batch`, 2,2, sep ="_"))
+  #mutate(batch = word(`batch`, 2,2, sep ="_")) %>% 
+  spread(Adduct, ChargeState)
 
-
-# plot based on batches
-ggplot(over_rep02, aes(meanRT, ExtractedMass)) +
-  geom_point(aes(colour = batch, shape = Polarity)) +
-  scale_shape_manual(values = c(6,16))
  
 # plot based on Classes
 
