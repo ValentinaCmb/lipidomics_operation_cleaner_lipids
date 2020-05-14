@@ -75,11 +75,12 @@ CDdata_gathered <- batch_01 %>%
   mutate(quotient.median = median(quotient),
          pqn = Area2/quotient.median)
 
-var <-  unique(g_CDdata_gathered$class)
+var <-  unique(CDdata_gathered$class)
 #[1] "Cer"   "CerPE" "CL"    "DG"    "LPC"   "PA"    "PC"    "PE"    "PG"    "PI"    "PS"    "TG" 
 
 # sum the areas belonging to the same class of lipids (i.e. the areas of the different species)
 # batch_0420 is the final data for statistical analysis of ALL lipids based on normalised areas
+
 batch01_0520 <-  CDdata_gathered  %>% 
   group_by(class, Sample) %>%  
   mutate(sumpqn = sum(pqn))
@@ -107,10 +108,9 @@ batch01_0520_plot <-  ggplot(batch01_0520, aes(`class`, log(sumpqn)))+
 
 batch01_0520_plot
 
-# working on  this plot now
 
+# working on  this plot now
 df <- batch01_0520
-#plotcolour = C
 
 species_plot<- function(x){
   df <- df %>% 
@@ -145,12 +145,12 @@ species_plot( "SPH")
 species_plot( "FA")
 
 
-# same using the loop : why doesn't it work?!?!
+# same using the for loop 
+
 library(ggplot2)
 #lapply(var, function(x))
 
 df <- batch01_0520
-data("df")
 var <-  unique(df$class)
 
 for (i in var) {
