@@ -29,11 +29,7 @@ extract_TC <- function(molecule){
 
 
 #read batch
-
-batch <- read_tsv("Data/CD_results_Batch02._final_library.csv", col_types = cols(Name = col_character())) 
-#key <- read_csv("Data/masslist_for_CD.csv", col_types = cols(Name = col_character()))   %>% 
-#   select(Formula, species) 
-  # unique()
+batch <- read_tsv("Data/CD_results_Batch04._final_library.csv", col_types = cols(Name = col_character())) 
 
 # run
 CDdata_gathered <- batch %>% 
@@ -52,6 +48,7 @@ CDdata_gathered <- batch %>%
   separate(pop, c("population", "sample"), sep="(?<=[A-Za-z])(?=[0-9])") %>% 
   mutate(population = tolower(population)) %>% 
   filter(!is.na(population)) %>% 
+  #filter(!population == "syd_160") %>% # for batch03 only
          group_by(Name, Formula, `RT [min]`, `Area (Max.)`, Sample, Area, count) %>% 
            mutate(class = str_extract(`Name`, "[a-zA-Z]+"),
                   species = extract_TC(Name)) %>% 
@@ -101,7 +98,7 @@ batch_0520_plot <-  ggplot(batch_0520, aes(`class`, log(sumpqn)))+
         axis.text.x = element_text(angle = 40), 
         panel.background = element_rect(fill = "grey91"), 
         legend.position = "right") +
-  labs(title = "Batch 02 Lipid Classes", y = "Log normalised area", x = "Lipid Classes") + 
+  labs(title = "Batch 04 Lipid Classes", y = "Log normalised area", x = "Lipid Classes") + 
   theme(axis.text = element_text(size = 8, face = "bold"), 
         axis.text.x = element_text(size = 10), 
         axis.text.y = element_text(size = 10), 
