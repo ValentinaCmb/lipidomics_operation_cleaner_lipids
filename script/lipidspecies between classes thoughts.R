@@ -27,3 +27,5 @@ bind_batch <- rbind(select(batch_01, Name, `RT [min]`, batch), select(batch_02, 
     sdRT = sd(RT)
   )
   
+
+comm <- na.omit(bind_batch)
