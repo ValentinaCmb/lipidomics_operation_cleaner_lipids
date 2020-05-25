@@ -1,3 +1,5 @@
+# script to compare lipid species that are not common btw the 2 subbatches 12 and 34
+
 library(tidyverse)
 library(readr)
 library(RColorBrewer)
